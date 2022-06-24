@@ -1,0 +1,29 @@
+server:
+  port: ${PORT:8080}
+spring:
+  banner:
+    location: classpath:banner.txt
+  profiles:
+    active: @activatedProperties@
+  jpa:
+    hibernate:
+      ddl:
+        auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+  mvc:
+    format:
+      date-time: iso
+      date: iso
+      time: iso
+springdoc:
+  swagger-ui:
+    path: /swagger
+application:
+  jwt:
+    issuer: shared-travel
+    key-store-path: jks/shared-travel-jwt.jks
+    alias: shared-travel-jwt
+    store-password: He!s3nbeRg
+    key-password: He!s3nbeRg

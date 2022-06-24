@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://ec2-54-247-96-153.eu-west-1.compute.amazonaws.com:5432/d3u1ljrk2mue3u
+    username: sexivpvgezjtus
+    password: e3d741b83a0c20ab95c518f14c5fc02ba95231d3bed04b0db310806138f6b703
+    driverClassName: org.postgresql.Driver
+    max-active: 5
+
+application:
+  cors:
+    allowed:
+      - http://shared-travel-web-staging-free.herokuapp.com
+      - http://localhost:4200

@@ -1,0 +1,47 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+stages:
+  - package
+  - build
+  - deploy
+
+maven-build:
+  image: openjdk:11.0.12-jdk
+  stage: package
+  script:
+    - chmod +x mvnw
+    - ./mvnw package -Pstaging
+  artifacts:
+    paths:
+      - target/*.jar
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .m2/
+
+dockerize:
+  stage: build
+  only:
+    - staging
+  script:
+    - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/shared-travel-api-staging-free/my-app .
+    - docker login -u _ -p $HEROKU_TOKEN registry.heroku.com
+    - docker push registry.heroku.com/shared-travel-api-staging-free/my-app
+  artifacts:
+    paths:
+      - imageid.txt
+deploy:
+  stage: deploy
+  only:
+    - staging
+  script:
+    - apk add --no-cache curl
+    - echo "Docker Image ID is $(cat imageid.txt)"
+    - |-
+      curl -X PATCH https://api.heroku.com/apps/shared-travel-api-staging-free/formation --header "Content-Type: application/json" --header "Accept: application/vnd.heroku+json; version=3.docker-releases" --header "Authorization: Bearer ${HEROKU_TOKEN}" --data '{ "updates": [ { "type": "web", "docker_image": "'$(cat imageid.txt)'" } ] }'

@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shared-travel
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+    max-active: 5
+
+application:
+  cors:
+    allowed:
+      - http://localhost:4200
